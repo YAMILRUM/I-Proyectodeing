@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,7 +33,7 @@
 <p><strong>Universidad:</strong> Universidad Iberoamericana Puebla</p>
 <p><strong>Departamento:</strong> Ingeniería en Sistemas Computacionales</p>
 <p><strong>Periodo de evaluación:</strong> Primer periodo</p>
-<p><strong>Fecha:</strong> 19 de septiembre del 2025</p>
+<p><strong>Fecha:</strong> ---</p>
 <p><strong>Participantes del equipo:</strong> Fernando José Axle Ricardez,Rodrigo Castro Bermeo, Yamil Rumilla Curiel y Erick Vazquez Juarez</p>
     </div>
   </header>
@@ -121,10 +120,10 @@ Indicador 2: Reducción de incidentes reportados de phishing en población capac
           </thead>
             <tr><th>ILOVEYOU</th><th>2000</th><th>Correo electrónico con archivo adjunto (.vbs) </th><th>Afectó a dependencias gubernamentales y empresas mexicanas; pérdidas económicas por caídas de sistemas. </th><th>Uso de antivirus actualizado y capacitación para no abrir adjuntos sospechosos. </th></tr>
             <tr><th>Klez</th><th>2001-2003</th><th>Correos electrónicos con archivos adjuntos maliciosos </th><th>Uno de los más difundidos en México; saturaba buzones de correo y dañaba archivos. </th><th>Filtros de correo, parches de seguridad y antivirus.</th></tr>
-            <tr><th>Conficker</th><th>2008-2010 </th><th>Redes locales y dispositivos USB</th><th>Infectó equipos en instituciones públicas mexicanas; comprometió datos sensibles</th><th>Actualización de Windows y desinfección masiva en redes.</th></tr>
-            <tr><th>Stuxnet </th><th>2010</th><th>USB y redes industriales (SCADA)</th><th>Detectado en sistemas industriales; alerta sobre vulnerabilidad de infraestructura crítica en México.</th><th>Ciberseguridad industrial, segmentación de redes.</th></tr>
-            <tr><th>Wannacry</th><th>2017</th><th>Ransomware vía vulnerabilidad SMB de Windows</th><th>Varias empresas mexicanas fueron afectadas; secuestro de información con petición de rescate.</th><th>Backups, actualización de sistemas, parches de seguridad.</th></tr>
-            <tr><th>FluBot / SMS malware</th><th>2021</th><th>Mensajes SMS con enlaces fraudulentos</th><th>Afectó a usuarios mexicanos con robo de datos bancarios.</th><th>Educación digital, filtros de SMS, apps verificadas.</th></tr>
+            <tr><th>Conficker</th><th>Año de aparición/ detección en México</th><th>Forma de propagación</th><th>Impacto en México</th><th>Medidas de prevención/ Respuesta</th></tr>
+            <tr><th>Nombre del virus</th><th>Año de aparición/ detección en México</th><th>Forma de propagación</th><th>Impacto en México</th><th>Medidas de prevención/ Respuesta</th></tr>
+            <tr><th>Nombre del virus</th><th>Año de aparición/ detección en México</th><th>Forma de propagación</th><th>Impacto en México</th><th>Medidas de prevención/ Respuesta</th></tr>
+            <tr><th>Nombre del virus</th><th>Año de aparición/ detección en México</th><th>Forma de propagación</th><th>Impacto en México</th><th>Medidas de prevención/ Respuesta</th></tr>
         </table>
       </section>
 
