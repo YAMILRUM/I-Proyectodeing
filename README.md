@@ -95,20 +95,20 @@
         <br>
         Indicador 1: Porcentaje de usuarios capacitados en ciberseguridad.
         <br>
-•⁠  ⁠Fórmula: (Usuarios informados ÷ Total de usuarios que vieron la página) × 100.
+• Fórmula: (Usuarios informados ÷ Total de usuarios que vieron la página) × 100.
         <br>
-•⁠  ⁠Línea base: 0 % (2024, no existen registros previos).  
+• Línea base: 0 % (2024, no existen registros previos).  
         <br>
-•⁠  ⁠Meta: 40 % de usuarios informados al cierre de 2025.  
+• Meta: 40 % de usuarios informados al cierre de 2025.  
         <br>
-•⁠  ⁠Fuente: Reportes internos de talleres y campañas digitales.  
+• Fuente: Reportes internos de talleres y campañas digitales.  
 Indicador 2: Reducción de incidentes reportados de phishing en población capacitada.
         <br>
-•⁠  ⁠Fórmula: (Incidentes reportados por informados ÷ Total de incidentes iniciales) × 100 
+• Fórmula: (Incidentes reportados por informados ÷ Total de incidentes iniciales) × 100 
         <br>
-•⁠  ⁠Línea base: 13.5 millones de víctimas en el primer trimestre de 2025.  
+• Línea base: 13.5 millones de víctimas en el primer trimestre de 2025.  
         <br>
-•⁠  ⁠Meta: Reducir en un 1 % los incidentes reportados en población capacitada al cierre de 2025.
+• Meta: Reducir en un 1 % los incidentes reportados en población capacitada al cierre de 2025.
     </p>
       </section>
 
