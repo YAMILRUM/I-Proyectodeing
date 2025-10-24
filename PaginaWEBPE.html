@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es" data-theme>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La Ciberseguridad — Proyecto</title>
+  <meta name="description" content="Proyecto web sobre ciberseguridad con navegación dinámica, modo oscuro y componentes interactivos." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path fill='%230ea5a4' d='M32 4l22 10v14c0 14.9-9.4 28.3-22 32C19.4 56.3 10 42.9 10 28V14z'/><path fill='%23fff' d='M32 18a10 10 0 00-10 10v6a10 10 0 0020 0v-6a10 10 0 00-10-10z'/></svg>">
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0f172a; --muted:#6b7280; --card:#f8fafc; --border:#e5e7eb; --accent:#0ea5a4; --accent-900:#0f766e;
+      --shadow: 0 10px 25px rgba(2,6,23,.08), 0 2px 6px rgba(2,6,23,.06);
+    }
+    html.dark{
+      --bg:#0b1020; --fg:#e5e7eb; --muted:#9ca3af; --card:#0f172a; --border:#1f2937; --accent:#14b8a6; --accent-900:#0d9488;
+      --shadow: 0 10px 25px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; margin:0; color:var(--fg); background:var(--bg);}
+    a{color:inherit}
+    img{max-width:100%; height:auto; display:block}
+    .center{display:flex; justify-content:center; margin:12px 0}
+    .container{max-width:1400px; margin-inline:auto; padding:0 40px}
+
+    /* Header */
+    header.hero{position:relative; overflow:hidden; color:#fff;}
+    .hero-bg{position:absolute; inset:0; background:radial-gradient(1200px 500px at 10% -10%, #1e293b, transparent 60%), linear-gradient(90deg, #020617, #0b1220 60%, #0e1729);} 
+    .hero-inner{position:relative; padding:28px 0 14px}
+
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px}
+    .brand .logo{width:56px; height:56px; border-radius:10px; object-fit:contain; background:#fff; padding:6px; box-shadow:var(--shadow)}
+    .brand small{opacity:.85}
+
+    .actions{display:flex; gap:8px}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; text-decoration:none; border:1px solid transparent; cursor:pointer; font-weight:600}
+    .btn.primary{background:var(--accent); color:#fff}
+    .btn.primary:hover{background:var(--accent-900)}
+    .btn.ghost{background:transparent; color:#fff; border-color:rgba(255,255,255,.15)}
+    .btn.ghost:hover{background:rgba(255,255,255,.08)}
+
+    /* Nav */
+    nav.navbar{margin-top:16px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); backdrop-filter: blur(8px); border-radius:14px}
+    .nav-ul{display:flex; flex-wrap:wrap; gap:6px; list-style:none; padding:8px; margin:0}
+    .nav-a{color:#fff; text-decoration:none; padding:8px 10px; border-radius:10px; display:inline-flex; gap:8px; align-items:center}
+    .nav-a[aria-current="page"], .nav-a:hover{background:rgba(255,255,255,.14)}
+
+    /* Layout + cards */
+    main{padding:22px 0}
+    .layout{display:grid; grid-template-columns:1fr; gap:24px}
+    .card{background:var(--card); border:1px solid rgba(229,231,235,.4); border-radius:14px; box-shadow:var(--shadow); width:100%; margin:0 auto 24px}
+    .section{padding:30px 40px; width:100%; max-width:100%}
+    .section h1, .section h2{margin:0 0 10px}
+    .meta{color:var(--muted); font-size:.95rem}
+
+    /* Table + inputs */
+    table{width:100%; border-collapse:collapse}
+    th, td{padding:10px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top}
+    thead th{position:sticky; top:0; background:var(--card); z-index:1}
+    .table-wrap{overflow:auto; border:1px solid var(--border); border-radius:12px}
+    .table-toolbar{display:flex; gap:10px; align-items:center; margin-bottom:10px}
+    .input{padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:transparent; color:inherit}
+
+    /* Chips & utilities */
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:rgba(14,165,164,.12); color:var(--accent); border:1px solid rgba(14,165,164,.25); font-weight:600}
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .muted{color:var(--muted)}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+
+    /* Footer */
+    footer{padding:22px 0; color:var(--muted); text-align:center}
+
+    /* Grids y tarjetas */
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px;transition:transform .18s ease, box-shadow .18s ease}
+    .info-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(2,6,23,.12)}
+    .info-card h3{margin:0 0 6px}
+    .info-card p{margin:0}
+
+    .grid{display:grid; gap:16px}
+    .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width: 980px){.grid.cols-2{grid-template-columns:1fr}}
+
+    .card.soft{border:1px solid var(--border)}
+    .person{display:flex; gap:16px; align-items:flex-start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px}
+    .person img{width:88px; height:88px; object-fit:cover; border-radius:10px; border:1px solid var(--border)}
+
+    .checklist{list-style:none;padding-left:0;margin:0}
+    .checklist li{padding-left:26px;position:relative;margin:8px 0}
+    .checklist li::before{content:"✓";position:absolute;left:0;top:0;line-height:1.2;display:inline-block;width:18px;height:18px;border-radius:999px;border:1px solid var(--border);text-align:center;font-weight:700}
+
+    .biblio{counter-reset:item}
+    .biblio li{margin:6px 0}
+
+    /* Transiciones */
+    .page-enter{animation:fadeUp .35s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .fade-enter{opacity:0; transform:translateY(8px)}
+    .fade-enter-active{animation:fadeUp .35s ease-out forwards}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="topbar">
+        <div class="brand">
+          <img class="logo" src="https://sic.gob.mx/images/46835" alt="Logo Ibero Puebla" />
+          <div>
+            <div>La Ciberseguridad</div>
+            <small class="muted">Universidad Iberoamericana Puebla · ISC</small>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="btnToggleTheme" title="Cambiar tema">🌓 <span class="hide-sm">Tema</span></button>
+          <a class="btn primary" href="#/bibliografia">Ver bibliografía</a>
+        </div>
+      </div>
+
+      <nav class="navbar">
+        <ul class="nav-ul" role="tablist">
+          <li><a class="nav-a" data-link href="#/portada">Portada</a></li>
+          <li><a class="nav-a" data-link href="#/equipo">Equipo</a></li>
+          <li><a class="nav-a" data-link href="#/objetivo">Objetivo</a></li>
+          <li><a class="nav-a" data-link href="#/tipos">Tipos de virus</a></li>
+          <li><a class="nav-a" data-link href="#/navega-seguro">Navega seguro</a></li>
+          <li><a class="nav-a" data-link href="#/recomendaciones">Recomendaciones</a></li>
+          <li><a class="nav-a" data-link href="#/bibliografia">Bibliografía</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="layout">
+      <main id="app" class="card section" aria-live="polite">
+        <!-- El enrutador cargará aquí la página -->
+      </main>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container muted">Proyecto académico · Última edición: 30/sep/2025</div>
+  </footer>
+
+  <!-- PORTADA -->
+  <template id="page-portada">
+    <section class="section">
+      <h1>Portada</h1>
+      <p class="meta">Periodo de evaluación: Primer periodo · Fecha: 19 de septiembre de 2025</p>
+      <div class="card section" style="margin-top:10px">
+        <div class="row">
+          <span class="chip">Universidad Iberoamericana Puebla</span>
+          <span class="chip">Departamento: Ingeniería en Sistemas Computacionales</span>
+        </div>
+        <p><strong>Equipo:</strong> Fernando José Axle Ricardez; Rodrigo Castro Bermeo; Yamil Rumilla Curiel; Erick Vázquez Juárez.</p>
+      </div>
+
+      <article>
+        <h2>La importancia de la ciberseguridad</h2>
+        <p>Hoy en día muchas personas desconocen los peligros que abundan en Internet y el mundo del <em>hacking</em>. Explorar sus áreas, causas y consecuencias es clave para entender su importancia.</p>
+        <p>En México, durante 2024 y el primer trimestre de 2025, la población y las empresas han enfrentado un aumento acelerado de ciberataques de diferentes tipos. En el primer trimestre de 2025, <strong>13.5 millones de usuarios</strong> fueron afectados por <em>malware</em> e intentos de <em>phishing</em>. Entre las causas destacan el desconocimiento de los riesgos y vulnerabilidades presentes en redes sociales, páginas web y <em>spam</em>, así como prácticas poco seguras, especialmente en población vulnerable.</p>
+        <div class="center"><img loading="lazy" src="https://smilecomunicacion.com/wp-contenido/uploads/2024/06/ciberseguridad-en-la-empresa.jpg.webp" width="300" height="350" alt="Ilustración de ciberseguridad en entornos empresariales"></div>
+        <h3>Consecuencias</h3>
+        <p>El incremento de la distribución de <em>malware</em> y estafas como el <em>phishing</em> afecta a más personas cada día: infecciones, filtración de información sensible y pérdidas económicas, entre otras. Tanto individuos como empresas pueden verse afectados si no adoptan medidas de prevención.</p>
+        <div class="center"><img loading="lazy" src="https://www.piranirisk.com/hubfs/Ataques-ciberneticos-causas-tipos-y-consecuencias.webp" width="300" height="350" alt="Gráfico sobre ataques cibernéticos"></div>
+        <h3>Relevancia</h3>
+        <p>El aumento de ciberataques representa una amenaza directa para ciudadanía y organizaciones: compromete información personal, económica y de seguridad. Esta investigación busca generar conciencia y promover prácticas seguras para fortalecer la cultura digital preventiva. Se apoya en estadísticas recientes y marcos normativos, beneficiando a quienes navegan por Internet y a instituciones que desean reducir riesgos.</p>
+        <div class="center"><img loading="lazy" src="https://img.interempresas.net/fotos/1795779.jpeg" width="300" height="350" alt="Persona utilizando computadora con candado digital"></div>
+      </article>
+    </section>
+  </template>
+
+  <!-- EQUIPO -->
+  <template id="page-equipo">
+    <section class="section">
+      <h1>Equipo</h1>
+      <div class="grid cols-2" style="margin-top:12px">
+        <article class="person card soft">
+          <img loading="lazy" src="https://intrauia.iberopuebla.mx/administrador/acceso/fotoDinamica.aspx?cuenta=204472" alt="Foto de Fernando José Axle Ricardez">
+          <div>
+            <h2 style="margin:0 0 6px">Fernando José Axle Ricardez</h2>
+            <p class="meta" style="margin:0">Estudios: Universidad Iberoamericana Puebla</p>
+            <p class="meta" style="margin:0">Carrera: Ingeniería en Sistemas Computacionales</p>
+            <p class="meta" style="margin:0">Contacto: 2292291513</p>
+            <p class="meta" style="margin:0">Correo electrónico: fernandoaxlericardez@gmail.com</p>
+          </div>
+        </article>
+        <article class="person card soft">
+          <img loading="lazy" src="https://intrauia.iberopuebla.mx/administrador/acceso/fotoDinamica.aspx?cuenta=201793" alt="Foto de Rodrigo Castro Bermeo">
+          <div>
+            <h2 style="margin:0 0 6px">Rodrigo Castro Bermeo</h2>
+            <p class="meta" style="margin:0">Estudios: Universidad Iberoamericana Puebla</p>
+            <p class="meta" style="margin:0">Carrera: Ingeniería en Sistemas Computacionales</p>
+            <p class="meta" style="margin:0">Contacto: 5531675959</p>
+            <p class="meta" style="margin:0">Correo electrónico: 99cbr18@gmail.com</p>
+          </div>
+        </article>
+        <article class="person card soft">
+          <img loading="lazy" src="https://intrauia.iberopuebla.mx/administrador/acceso/fotoDinamica.aspx?cuenta=203543" alt="Foto de Yamil Rumilla Curiel">
+          <div>
+            <h2 style="margin:0 0 6px">Yamil Rumilla Curiel</h2>
+            <p class="meta" style="margin:0">Estudios: Universidad Iberoamericana Puebla</p>
+            <p class="meta" style="margin:0">Carrera: Ingeniería en Sistemas Computacionales</p>
+            <p class="meta" style="margin:0">Contacto: 2311551302</p>
+            <p class="meta" style="margin:0">Correo electrónico: yamilrumillacu@gmail.com</p>
+          </div>
+        </article>
+        <article class="person card soft">
+          <img loading="lazy" src="https://intrauia.iberopuebla.mx/administrador/acceso/fotoDinamica.aspx?cuenta=203816" alt="Foto de Erick Vázquez Juárez">
+          <div>
+            <h2 style="margin:0 0 6px">Erick Vázquez Juárez</h2>
+            <p class="meta" style="margin:0">Estudios: Universidad Iberoamericana Puebla</p>
+            <p class="meta" style="margin:0">Carrera: Ingeniería en Sistemas Computacionales</p>
+            <p class="meta" style="margin:0">Contacto: 2225240619</p>
+            <p class="meta" style="margin:0">Correo electrónico: erickvaju@gmail.com</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </template>
+
+  <!-- OBJETIVO -->
+  <template id="page-objetivo">
+    <section class="section">
+      <h1>Objetivo general</h1>
+      <p>Fortalecer la cultura de ciberseguridad en usuarios y empresas en México mediante estrategias de concienciación y difusión de prácticas seguras para reducir la incidencia e impacto de ciberataques durante 2025.</p>
+      <div style="position: relative; width: 100%; height: 0; padding-top: 100%; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden; border-radius: 8px; will-change: transform;">
+        <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;" src="https://www.canva.com/design/DAGxd_U-OYE/QQsiGgDqwoynG8y1DaAwPQ/view?embed" allowfullscreen></iframe>
+      </div>
+      <h2>Objetivos específicos (SMART)</h2>
+      <ul>
+        <li>Desarrollar y difundir concientización sobre <em>phishing</em> y <em>malware</em> dirigida a adolescentes, adultos jóvenes y adultos mayores antes de diciembre de 2025.</li>
+        <li>Informar sobre buenas prácticas básicas (antivirus, respaldos, verificación de correos) durante el segundo semestre de 2025.</li>
+        <li>Que cada persona usuaria reconozca señales básicas para identificar virus/engaños.</li>
+      </ul>
+      <div class="center"><img loading="lazy" src="https://www.seguritecnia.es/wp-content/uploads/2021/01/gestion-de-un-incidente-de-ciberseguridad.jpg" width="300" height="350" alt="Gestión de incidentes de ciberseguridad"></div>
+      <h3>Indicadores</h3>
+      <div class="card section">
+        <p><strong>Indicador 1:</strong> % de usuarios capacitados en ciberseguridad.</p>
+        <p><b>Fórmula:</b> (Usuarios informados ÷ Total de usuarios que vieron la página) × 100</p>
+        <p><b>Línea base:</b> 0 % (2024, sin registros previos)</p>
+        <p><b>Meta:</b> 40 % al cierre de 2025</p>
+        <p><b>Fuente:</b> Reportes internos de talleres y campañas digitales</p>
+        <hr style="border:none;border-top:1px solid var(--border)">
+        <p><strong>Indicador 2:</strong> Reducción de incidentes de <em>phishing</em> en población capacitada.</p>
+        <p><b>Fórmula:</b> (Incidentes reportados por informados ÷ Total de incidentes iniciales) × 100</p>
+        <p><b>Línea base:</b> 13.5 millones de víctimas en T1 2025</p>
+        <p><b>Meta:</b> Reducir 1 % en población capacitada al cierre de 2025</p>
+      </div>
+    </section>
+  </template>
+
+  <!-- TIPOS DE VIRUS -->
+  <template id="page-tipos">
+    <section class="section">
+      <h1>Tipos de virus</h1>
+      <div class="table-toolbar">
+        <input id="filter" class="input" placeholder="Filtrar por nombre o año…" aria-label="Filtrar tabla" />
+        <button class="btn ghost" id="btnSort">↕︎ Ordenar por año</button>
+      </div>
+      <div class="table-wrap">
+        <table id="virusTable">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th data-key="anio">Año de aparición/detección en México</th>
+              <th>Propagación</th>
+              <th>Impacto en México</th>
+              <th>Prevención / Respuesta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ILOVEYOU<br>
+                <img loading="lazy" src="https://c.files.bbci.co.uk/A018/production/_112048904_love_bug-nc-1.png" width="150" height="175" alt="Pantalla del virus ILOVEYOU">
+              </td>
+              <td>2000</td>
+              <td>Correo electrónico con adjunto (.vbs)</td>
+              <td>Afectó dependencias y empresas; caídas de sistemas.</td>
+              <td>Antivirus actualizado, no abrir adjuntos sospechosos.</td>
+            </tr>
+            <tr>
+              <td>Klez<br>
+                <img loading="lazy" src="https://pbs.twimg.com/profile_images/1810765457961406464/2F80zTkv_200x200.jpg" width="150" height="175" alt="Referencia visual asociada a Klez">
+              </td>
+              <td>2001–2003</td>
+              <td>Correos con adjuntos maliciosos</td>
+              <td>Amplia difusión; saturaba buzones y dañaba archivos.</td>
+              <td>Filtros de correo, parches y antivirus.</td>
+            </tr>
+            <tr>
+              <td>Conficker<br>
+                <img loading="lazy" src="https://www.siliconrepublic.com/wp-content/uploads/2014/12/201204/computer-virus-718x523.jpg" width="150" height="175" alt="Concepto de virus informático">
+              </td>
+              <td>2008–2010</td>
+              <td>Redes locales y dispositivos USB</td>
+              <td>Infecciones en instituciones públicas; riesgo de datos.</td>
+              <td>Actualizar Windows, desinfección en red.</td>
+            </tr>
+            <tr>
+              <td>Stuxnet<br>
+                <img loading="lazy" src="https://i.guim.co.uk/img/media/88a4bdb2706ca5161c9321e624884f749d298d76/99_15_1734_1041/master/1734.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=e324b748430b24bece647b0525f0ba6b" width="150" height="175" alt="Tablero industrial SCADA">
+              </td>
+              <td>2010</td>
+              <td>USB y redes industriales (SCADA)</td>
+              <td>Detectado en sistemas industriales; alerta sobre infraestructura crítica.</td>
+              <td>Segmentación de redes, ciberseguridad industrial.</td>
+            </tr>
+            <tr>
+              <td>WannaCry<br>
+                <img loading="lazy" src="https://concienciat.gva.es/wp-content/uploads/2018/03/Virus-WannaCry.jpg" width="150" height="175" alt="Pantalla de rescate de WannaCry">
+              </td>
+              <td>2017</td>
+              <td>Ransomware vía SMB de Windows</td>
+              <td>Afectó a varias empresas; secuestro de información.</td>
+              <td>Backups, actualización y parches.</td>
+            </tr>
+            <tr>
+              <td>FluBot / SMS malware<br>
+                <img loading="lazy" src="https://cdn.businessday.ng/2021/10/Flubot.png" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>2021</td>
+              <td>Mensajes SMS con enlaces fraudulentos</td>
+              <td>Robo de datos bancarios a usuarios.</td>
+              <td>Educación digital, filtros SMS, apps verificadas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </template>
+
+  <!-- NAVEGA SEGURO -->
+  <template id="page-navega-seguro">
+    <section class="section">
+      
+      <h1>Navega seguro</h1>
+      <article>Internet es una herramienta esencial en la vida moderna: permite comunicarnos, estudiar, trabajar, comprar y acceder a información de todo tipo. Sin embargo, el uso cotidiano de la red también conlleva riesgos importantes relacionados con la seguridad digital, como el robo de información personal, virus informáticos, fraudes, suplantación de identidad o pérdida de datos. Por ello, conocer las buenas prácticas para navegar de forma segura en la web se ha vuelto indispensable para proteger tanto nuestra información como nuestros dispositivos.</article>
+      <br>
+        <article class="info-card">
+          <h3>Sitios web falsos o inseguros</h3>
+          <p class="muted">Existen páginas fraudulentas (phishing) que imitan a las legítimas para robar datos personales, contraseñas o información bancaria. Revisa que la dirección del sitio comience con <b>https://</b> y tenga el ícono del candado.</p>
+          <div class="center"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Internet2.svg" width="300" height="350" alt="Iconografía de internet seguro"></div>
+        </article>
+
+        <article class="info-card">
+          <h3>Redes Wi-Fi públicas o desconocidas</h3>
+          <p class="muted">Conectarse a redes abiertas puede ser riesgoso: usa una <b>VPN</b> para cifrar tu conexión y evita operaciones sensibles. Recomendaciones de VPN:
+            <br>• <a href="https://nordvpn.com/es/pro/?utm_medium=affiliate&utm_term=&utm_content&utm_source=aff24683&utm_campaign=off30" target="_blank" rel="noopener noreferrer">NordVPN</a>
+            <br>• <a href="https://surfshark.com/es/deals?aff=vpnpro&coupon=vpnprodeal&transaction_id=102fe88efcfb0f48750cd8ae4b7042&offer_id=1246&affiliate_id=1751&source=&aff_sub=&utm_source=Affiliates&utm_medium=1751&utm_campaign=affiliate&recurring_goal_id=1241" target="_blank" rel="noopener noreferrer">Surfshark</a>
+            <br>• <a href="https://protonvpn.com/es-es/l/special-partner-offer?url_id=863&utm_campaign=ww-all-2c-vpn-gro_aff-g_acq-partners_program&utm_source=aid-tune-1255&utm_medium=link&utm_term=vpn_home_plans_hfp_landing&utm_content=25&phfp=true" target="_blank" rel="noopener noreferrer">ProtonVPN</a>
+          </p>
+          <div class="center"><img loading="lazy" src="https://ibertronica.es/blog/wp-content/uploads/2024/06/1676445233956699.jpg" width="300" height="350" alt="Ilustración de conexión Wi-Fi segura"></div>
+        </article>
+
+        <article class="info-card">
+          <h3>Malware, virus y software no confiable</h3>
+          <p class="muted">Algunas páginas descargan archivos maliciosos o muestran falsas actualizaciones. Mantén un antivirus actualizado y descarga solo de fuentes verificadas.</p>
+          <div class="center"><img loading="lazy" src="https://www.digitalartmm.com/wp-content/uploads/2023/04/02-Que-es-un-sitio-web-seguro-y-confiable-Digital-Art-MM-1024x683.webp" width="300" height="350" alt="Página confiable vs no confiable"></div>
+        </article>
+
+        <article class="info-card">
+          <h3>Uso de contraseñas débiles o repetidas</h3>
+          <p class="muted">Evita “123456”, “qwerty” o reutilizar claves. Crea contraseñas largas con mayúsculas, minúsculas, números y símbolos. Activa 2FA cuando sea posible.</p>
+          <div class="center"><img loading="lazy" src="https://www.incibe.es/sites/default/files/2024-02/imagen-blog-campana-contrasenas-seguras.jpg"  width="300" height="350" alt="Ilustración de seguridad de contraseñas"></div>
+        </article>
+
+        <article class="info-card">
+          <h3>Falta de actualización del navegador o sistema</h3>
+          <p class="muted">Actualiza navegador, SO y extensiones para cerrar vulnerabilidades conocidas.</p>
+          <div class="center"><img loading="lazy" src="https://innovatecgalicia.es/wp-content/webpc-passthru.php?src=https://innovatecgalicia.es/wp-content/uploads/2023/03/actualizar-sistema-operativo-1-1.jpg&nocache=1"  width="300" height="350" alt="Actualizaciones del sistema operativo"></div>
+        </article>
+
+        <article class="info-card">
+          <h3>Exceso de información compartida</h3>
+          <p class="muted">Controla la privacidad en redes sociales y limita datos públicos como ubicación, rutinas o teléfono.</p>
+          <div class="center"><img loading="lazy" src="https://cmsudi.udelistmo.edu/sites/default/files/el-problema-de-la-sobreinformacion.jpg"  width="300" height="350" alt="Privacidad en redes sociales"></div>
+        </article>
+      </div>
+    </section>
+  </template>
+
+  <!-- RECOMENDACIONES -->
+  <template id="page-recomendaciones">
+    <section class="section">
+      <h1>Recomendaciones</h1>
+      <ul class="checklist">
+        <li>Antes de iniciar sesión en cualquier sitio, comprobar que la dirección es correcta y segura.</li>
+        <li>Usar un antivirus activo y mantener el firewall encendido.</li>
+        <li>No compartir fotos de documentos personales (INE, pasaporte, etc.) en redes sociales.</li>
+        <li>Configurar la privacidad de las cuentas para que sólo amigos o contactos aprobados vean la información.</li>
+        <li>Revisar periódicamente los dispositivos conectados a las cuentas (por ejemplo, Google o Facebook ofrecen esa función).</li>
+      </ul>
+    </section>
+    <br>
+    <H1>Antivirus Recomendables</H1>
+    <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Ventajas</th>
+
+              <th>Sitio donde adquirirlo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Microsoft Defender (Windows integrado)<br>
+                <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Windows-defender.svg/1200px-Windows-defender.svg.png" width="150" height="175" alt="Pantalla del virus ILOVEYOU">
+              </td>
+              <td>Protección en tiempo real, firewall y control parental.Escaneo offline eficaz.
+                <br>Ideal para: usuarios domésticos que mantienen su sistema actualizado.
+                <br>Punto fuerte: integración total con el sistema operativo.</td>
+              <td>https://www.microsoft.com/en-us/windows/comprehensive-security?r=1</td>
+            </tr>
+            <tr>
+              <td>Bitdefender Antivirus Plus / Total Security<br>
+                <img loading="lazy" src="https://softwareasli.com/wp-content/uploads/2024/10/Bitdefender-Antivirus-Plus-3-Pcs-3-Years-Global.webp" width="150" height="175" alt="Referencia visual asociada a Klez">
+              </td>
+              <td>Bajo consumo de recursos. Ideal para: máxima protección sin ralentizar el sistema. 
+                <br>Punto fuerte: equilibrio entre rendimiento y seguridad avanzada.
+                <br>Detección excelente (premiado por AV-Test y AV-Comparatives).
+              </td>
+              <td>https://www.bitdefender.com</td>
+            </tr>
+            <tr>
+              <td>Kaspersky Standard / Plus / Premium
+                <br>
+                <img loading="lazy" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSPA9-gpQzMUeGgru9YElkkAXm2zZES--ovQ&s" width="150" height="175" alt="Concepto de virus informático">
+              </td>
+              <td>Protección web y optimización del sistema.
+              <br>Ideal para: usuarios avanzados o empresas pequeñas.
+              <br>Punto fuerte: defensa multicapa.
+              <br>Fuerte defensa contra ransomware y exploits.</td>
+              <td>https://latam.kaspersky.com</td>
+            </tr>
+            <tr>
+              <td>Norton 360<br>
+                <img loading="lazy" src="https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxmj9UzttiAAOveeZAUEBo6yxuTgo.539579VBlP44dRMKbHGAFgLtZ.Wf5ckd4kGnCoaImJZcjnyg0B7TpfSh9M-&format=source" width="150" height="175" alt="Tablero industrial SCADA">
+              </td>
+              <td>Incluye VPN, backup en la nube y monitoreo en la Dark Web.
+              <br>Ideal para: quienes buscan un paquete completo de seguridad y privacidad.<br>Punto fuerte: servicios adicionales (VPN + backup + protección de identidad).
+              </td>
+              <td>https://mx.norton.com</td>
+            </tr>
+            <tr>
+              <td>Avast One / Avast Free Antivirus<br>
+                <img loading="lazy" src="https://play-lh.googleusercontent.com/qhI-f_BXMCFasM8ZAfmr_BuQeWL87FoOBuLQICAAqWO0KwAVbfhd_yBFVIZZ15oBccJB" width="150" height="175" alt="Pantalla de rescate de WannaCry">
+              </td>
+              <td>Escudo de ransomware y sandbox para ejecutar programas sospechosos.
+              <br>Ideal para: usuarios domésticos que quieren algo gratuito pero potente.
+              <br>Punto fuerte: sandboxing y análisis de comportamiento.
+            </td>
+              <td>https://www.avast.com</td>
+            </tr>
+            <tr>
+              <td>AVG AntiVirus Free / Internet Security<br>
+                <img loading="lazy" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5Dt1dsO3GQvf10ZXGrElrusD-o_bVRTGYig&s" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>Protección de cámara y archivos personales.
+              <br>Ideal para: quienes prefieren una interfaz sencilla.
+              <br>Punto fuerte: protección web y detección rápida.
+              </td>
+              <td>https://www.avg.com</td>
+            </tr>
+            <tr>
+              <td>ESET NOD32 / Smart Security Premium<br>
+                <img loading="lazy" src="https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxqlzhSacvvL_freCwtE7HtQo9pKUpudS4C_ZYPPIHi9UG__s5vFLXb16aSv43YULoWVXJhJa60P8Mhf1KoRgxsQ-&format=source" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>Excelente contra rootkits y amenazas del sistema.
+              <br>Ideal para: usuarios técnicos o gamers.
+              <br>Punto fuerte: bajo consumo y control detallado.
+              </td>
+              <td>https://www.eset.com</td>
+            <tr>
+              <td>McAfee Total Protection<br>
+                <img loading="lazy" src="https://grupoolom.com/wp-content/uploads/2024/04/McAfee-Total-Protection.png" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>Monitoreo de identidad y red doméstica.
+              <br>Ideal para: familias o múltiples dispositivos.
+              <br>Punto fuerte: múltiples licencias y protección de identidad.
+              </td>
+              <td>https://www.mcafee.com</td>
+            <tr>
+              <td>Malwarebytes Premium<br>
+                <img loading="lazy" src="https://www.quietpc.com/images/products/mb-prem-oem-c-large.jpg" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>Compatible con otros antivirus.
+              <br>Ideal para: limpieza de infecciones o complemento de seguridad.
+              <br>Punto fuerte: detección de malware emergente.
+              </td>
+              <td>https://www.malwarebytes.com</td>
+             <tr>
+              <td>Sophos Home / Sophos Linux AV<br>
+                <img loading="lazy" src="https://cdn.mos.cms.futurecdn.net/v2/t:0,l:178,cw:1143,ch:643,q:80,w:1143/FWjPxv8pX4i5qw83Hcdooj.jpg" width="150" height="175" alt="Advertencia sobre FluBot">
+              </td>
+              <td>Protección sólida en Linux, Windows y macOS.
+                <br>Ideal para: entornos mixtos o administración remota.
+                <br>Punto fuerte: control centralizado y multiplataforma.
+              </td>
+              <td>https://www.sophos.com/en-us/legal/anti-virus-for-linux-products</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </template>
+
+  <!-- BIBLIOGRAFÍA -->
+  <template id="page-bibliografia">
+    <section class="section">
+      <h1>Bibliografía</h1>
+      <p>Incluye todas las fuentes en formato APA.</p>
+      <ol class="biblio">
+        <li>National Cybersecurity Alliance.<em>Cómo saber si su computadora tiene un virus y qué hacer al respecto.</em>.https://www.staysafeonline.org</li>
+        <li>SafetyDetectives <em>Los 7 mejores antivirus en 2025.</em>.https://es.safetydetective.com/recommended2/antivirus-software/mx</li>
+        <li>(s.f.) <em>Las Mejores Ofertas de Antivirus en 2025.</em>. https://www.antiviruslist.com</li>
+        <li>(s.f.) <em>Virus - Try SpyHunter’s FREE malware remover.</em>.https://spyhunter.enigmasoftware.com</li>
+        <li>Deucalion. <em>10 principales tipos de virus informáticos. Skynet Systems SL.</em>.https://skynet-sys.es/10-principales-tipos-de-virus-informaticos/</li>
+        <li>Microsoft. <em>¿Qué es el malware? Definición y tipos.</em>. https://www.microsoft.com/es-mx/security/business/security-101/what-is-malware</li>
+        <li>Santander <em>Cómo evitar los virus informáticos.</em>.https://www.santander.com/es/stories/como-evitar-los-virus-informaticos</li>
+        <li>Trend Micro - Mexico <em>¿Cuáles son los distintos tipos de phishing? Trend Micro.</em>.https://share.google/eMEsy5YWJq8vKUxu</li>
+        <li>Trend Micro - Mexico <em>12 tipos de phishing que debes conocer (con ejemplos). Trend Micro.</em>.https://www.trendmicro.com/es_es/what-is/phishing/types-of-phishing.html</li>
+
+      </ol>
+    </section>
+  </template>
+
+  <script>
+    // Tema claro/oscuro con persistencia
+    (function(){
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme');
+      if(saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+        root.classList.add('dark');
+      }
+      document.getElementById('btnToggleTheme').addEventListener('click',()=>{
+        root.classList.toggle('dark');
+        localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+      });
+    })();
+
+    // Rutas (removido '/antivirus' porque no existe esa plantilla)
+    const routes = {
+      '/portada': document.getElementById('page-portada').innerHTML,
+      '/equipo': document.getElementById('page-equipo').innerHTML,
+      '/objetivo': document.getElementById('page-objetivo').innerHTML,
+      '/tipos': document.getElementById('page-tipos').innerHTML,
+      '/navega-seguro': document.getElementById('page-navega-seguro').innerHTML,
+      '/recomendaciones': document.getElementById('page-recomendaciones').innerHTML,
+      '/bibliografia': document.getElementById('page-bibliografia').innerHTML,
+    };
+
+    function render(){
+      const app = document.getElementById('app');
+      const path = (location.hash.replace('#','') || '/portada');
+      app.classList.remove('page-enter');
+      app.innerHTML = routes[path] || routes['/portada'];
+
+      // transición de entrada
+      app.classList.remove('fade-enter','fade-enter-active');
+      app.classList.add('fade-enter');
+      void app.offsetWidth;
+      app.classList.add('fade-enter-active');
+      app.classList.add('page-enter');
+
+      document.querySelectorAll('[data-link]').forEach(a=>{
+        const target = a.getAttribute('href').replace('#','');
+        a.setAttribute('aria-current', target===path ? 'page' : 'false');
+      });
+
+      if(path === '/tipos') initTiposPage();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    window.addEventListener('hashchange', render);
+    window.addEventListener('DOMContentLoaded', render);
+
+    // Filtro/orden de la tabla (Tipos de virus)
+    function initTiposPage(){
+      const input = document.getElementById('filter');
+      const btnSort = document.getElementById('btnSort');
+      const table = document.getElementById('virusTable');
+      if(!table) return;
+      const rows = Array.from(table.tBodies[0].rows);
+
+      input?.addEventListener('input', () => {
+        const q = input.value.toLowerCase();
+        rows.forEach(tr => {
+          const text = tr.innerText.toLowerCase();
+          tr.style.display = text.includes(q) ? '' : 'none';
+        });
+      });
+
+      let asc = true;
+      btnSort?.addEventListener('click', () => {
+        const parseYear = (val) => {
+          const m = String(val).match(/\d{4}/);
+          return m ? parseInt(m[0],10) : 0;
+        };
+        const sorted = rows.sort((a,b)=> asc
+          ? parseYear(a.cells[1].innerText) - parseYear(b.cells[1].innerText)
+          : parseYear(b.cells[1].innerText) - parseYear(a.cells[1].innerText)
+        );
+        const tbody = table.tBodies[0];
+        tbody.innerHTML = '';
+        sorted.forEach(tr=>tbody.appendChild(tr));
+        asc = !asc;
+      });
+    }
+  </script>
+</body>
+</html>
